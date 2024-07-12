@@ -1,0 +1,68 @@
+.pene {
+    color: rgb(14, 0, 0);
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px; /* Espacio entre las cajas */
+    width: calc(33.33% - 20px); /* Aproximadamente el 33.33% del ancho del contenedor */
+    margin: 50px; /* Espacio entre las filas */
+  }
+  
+  .box {
+    background-color: #f0f0f0;
+    border: 20px solid #ccc;
+    text-align: center;
+    padding: 10px;
+  }
+  .container {
+    display: grid;
+    grid-template-columns: repeat(3, calc(33.33% - 20px)); /* Tres columnas iguales con espacio de 20px */
+    grid-auto-rows: auto; /* Altura automática basada en el contenido */
+    gap: 0 20px; /* Espacio de 0px vertical y 20px horizontal entre las cajas */
+  }
+  
+  .box {
+    position: relative;
+    overflow: hidden; /* Para asegurarse de que la imagen no se desborde */
+    border: 1px solid #ccc;
+  }
+  
+  .box img {
+    display: block;
+    width: 100%; /* Ajusta la imagen al ancho del contenedor .box */
+    height: auto; /* Mantén la proporción de la imagen */
+  }
+
+  /* ../components/style.css */
+.character-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .character-item {
+    width: calc(25% - 20px); /* Ajusta según tus necesidades */
+    margin-bottom: 20px;
+    list-style: none;
+    text-align: center;
+  }
+  
+  .pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .pagination button {
+    margin: 0 5px;
+  }
+  

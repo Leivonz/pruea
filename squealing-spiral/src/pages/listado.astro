@@ -1,0 +1,197 @@
+---
+import fetch from 'node-fetch';
+import React, { useState } from 'react';
+//aca importa la funcion "fetch" de la bibloteca para realizar solicitudes http
+import CharacterList from '../components/Characterlist.tsx';
+//aca importa el componente "CharacterList" de la carpeta "components"
+import '../components/style.css'
+import type { ActionError } from 'astro:actions';
+
+interface Character {
+    id: number;
+    name: string;
+    status: string;
+    species: string;
+    image: string;
+    gender: string;
+}
+//aca crea las interfaces "Character" y "ApiResponse" para definir la estructura de los datos
+interface ApiResponse {
+    info: {
+        next: string | null;
+    };
+    results: Character[];
+}
+
+interface CharacterListProps {
+  characters: Character[];
+}
+
+async function fetchAllCharacters(url: string): Promise<Character[]> {
+    let allCharacters: Character[] = [];
+    let nextUrl: string | null = url;
+
+    while (nextUrl) {
+        const response = await fetch(nextUrl);
+        const data = await response.json() as ApiResponse;
+        if (data.results) {
+            allCharacters = [...allCharacters, ...data.results];
+        }
+
+        nextUrl = data.info.next;
+    }
+
+    return allCharacters;
+}
+
+async function fetchFilteredCharacters(name: string, gender: string, species: string, status: string): Promise<Character[]> {
+  const baseUrl = 'https://rickandmortyapi.com/api/character';
+  const params = new URLSearchParams();
+
+  if (name) params.append('name', name);
+  if (gender) params.append('gender', gender);
+  if (species) params.append('species', species);
+  if (status) params.append('status', status);
+
+  const apiUrl = `${baseUrl}?${params.toString()}`
+  return await fetchAllCharacters(apiUrl);
+}
+
+
+
+//aca crea la funcion "fetchAllCharacters" que recibe una url y retorna una promesa de un array de "Character"
+const apiUrl = 'https://rickandmortyapi.com/api/character';
+const characters = await fetchAllCharacters(apiUrl);
+const charactersJson = JSON.stringify(characters);
+//aca crea la constante "apiUrl" que contiene la url de la api y la constante "characters" que contiene el resultado de la funcion "fetchAllCharacters"
+// document.addEventListener('DOMContentLoaded', () => {
+//   const form = document.querySelector('.filters') as HTMLFormElement;
+//   form.addEventListener('submit', async (event) => {
+//     event.preventDefault();
+
+//     const name = (document.getElementById('nombre') as HTMLInputElement).value;
+//     const gender = (document.getElementById('gender') as HTMLSelectElement).value;
+//     const species = (document.getElementById('species') as HTMLSelectElement).value;
+//     const status = (document.getElementById('status') as HTMLSelectElement).value;
+
+//     const filteredCharacters = await fetchFilteredCharacters(name, gender, species, status);
+//     CharacterList(filteredCharacters);
+//   });
+// });
+---
+
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rick y Morty</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <style>
+    .character-details {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-top: 10px;
+    }
+  </style>
+  <body>
+    <div class="navbar navbar-expand-sm bg-dark navbar-dark">
+      <div class="container-fluid">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="http://localhost:4321/listado">Listado de Personajes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Nosotros</a>
+          </li>
+        </div>
+  </div>
+  <h1>Rick y Morty Personajes</h1>
+  <div class="sidebar">
+    <h2>Busqueda Avanzada</h2>
+    <form id="filters">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre del personaje">
+        
+        
+        <label for="gender">Genero:</label>
+        <select id="gender" name="gender">
+            <option value="">Seleccione</option>
+            <option value="Male">Masculino</option>
+            <option value="Female">Femenino</option>
+            <option value="Genderless">Sin Género</option>
+            <option value="Unknown">Desconocido</option>
+            <option value="otro">Otro</option>
+        </select>
+
+        <label for="Species">Especie:</label>
+        <select id="species" name="species">
+            <option value="">Seleccione</option>
+            <option value="Human">Humano</option>
+            <option value="Humanoid">Humanoide</option>
+            <option value="Creature">Creature</option>
+            <option value="Mythological Creature">Criatura Mitológica</option>
+            <option value="Cronenberg">Cronenberg</option>
+            <option value="Unknown">Desconocido</option>
+            <option value="otro">Otro</option>
+        </select>
+
+        <label for="Status">Estado:</label>
+        <select id="status" name="species">
+            <option value="">Seleccione</option>
+            <option value="Alive">Vivo</option>
+            <option value="Dead">Muerto</option>
+        </select>
+        <button type="submit">Buscar</button>
+    </form>
+  </div>
+  <CharacterList characters={characters} />
+  <div id="character-list">
+    
+  </div>
+  <script type="module">
+    import React, { useState } from 'react';
+    import { render } from 'preact';
+    import CharacterList from '../components/Characterlist.tsx';
+
+    const initialCharacters = JSON.parse(`<?php echo $charactersJson; ?>`);
+
+    const App = () => {
+      const [characters, setCharacters] = useState(initialCharacters);
+
+      const fetchFilteredCharacters = async (name, gender, species, status) => {
+        const baseUrl = 'https://rickandmortyapi.com/api/character';
+        const params = new URLSearchParams();
+
+        if (name) params.append('name', name);
+        if (gender) params.append('gender', gender);
+        if (species) params.append('species', species);
+        if (status) params.append('status', status);
+
+        const apiUrl = `${baseUrl}?${params.toString()}`;
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        setCharacters(data.results);
+      };
+
+      const handleSubmit = async (event) => {
+        event.preventDefault();
+        const name = document.getElementById('name').value;
+        const gender = document.getElementById('gender').value;
+        const species = document.getElementById('species').value;
+        const status = document.getElementById('status').value;
+        await fetchFilteredCharacters(name, gender, species, status);
+      };
+
+      document.getElementById('filters').addEventListener('submit', handleSubmit);
+
+      return <CharacterList characters={characters} />;
+    };
+
+    render(<App />, document.getElementById('character-list'));
+  </script>
+  </body>
+</html>
