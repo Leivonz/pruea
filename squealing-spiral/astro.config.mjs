@@ -3,6 +3,6 @@ import react from '@astrojs/react';
 
 export default defineConfig({
   integrations: [react()],
-  site: 'https://astronaut.github.io',
+  site: 'https://leivonz.github.io',
   base: 'pruea',
 });
